@@ -11,10 +11,17 @@
       {{ current.matches('hidden') ? 'Show preview' : 'Hide preview' }}
     </button>
 
-    <br/>
+    <br />
 
     <button v-if="todoListState.matches('hidden')" @click="send('OPEN_LIST')" >Open TODO list</button>
     <TodoList v-if="todoListState.matches('visible')" />
+
+
+    <br />
+    <hr />
+    <br />
+
+    <LightComponent />
   </div>
 </template>
 
@@ -22,6 +29,7 @@
 import { createMachine, interpret, State } from "xstate";
 import TodoList from "@/components/TodoList";
 import TodoListMachine from "@/machines/TodoListMachine";
+import LightComponent from "@/components/LightComponent";
 
 
 const toggleMachine = createMachine({
@@ -62,6 +70,8 @@ const resolvedState = toggleMachine.resolveState(prevState)
 export default {
   name: 'App',
   components: {
+    LightComponent,
+
     TodoList
   },
   data() {
