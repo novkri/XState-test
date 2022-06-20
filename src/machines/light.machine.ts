@@ -4,7 +4,26 @@ interface LightContext {
     elapsed: number
     direction: string
     switches: number
+    customDuration: number
 }
+// Child machine, switch states when time is up
+const minuteMachine = createMachine({
+    id: 'timer',
+    initial: 'active',
+    context: {
+        duration: 1000 // default duration
+    },
+    states: {
+        active: {
+            after: {
+                // todo how to  customDuration from parent ?
+                30000: { target: 'finished' }
+            }
+        },
+        finished: { type: 'final' }
+    }
+})
+
 const lightMachine = createMachine({
     // for better  context typing
     schema: {
@@ -20,7 +39,8 @@ const lightMachine = createMachine({
     context: {
         elapsed: 0,
         direction: 'east',
-        switches: 0
+        switches: 0,
+        customDuration: 30000
     },
 
     // state definitions
@@ -29,18 +49,26 @@ const lightMachine = createMachine({
             tags: ['lightswitcher'],
             // action on state entry
             // @ts-ignore
-            entry: assign({ switches: (ctx) => ctx.switches + 1}),
-
+            entry: assign<LightContext>({ switches: (ctx) => ctx.switches + 1}),
             on: {
                 SWITCH: {target: 'red'},
                 BREAK: {target: 'broken', cond: 'isTooManySwitches'}
 
+            },
+            invoke: {
+                src: minuteMachine,
+                // todo data ??
+                // Deriving child context from parent context
+                data: {
+                    duration: (context: LightContext) => context.customDuration
+                },
+                onDone: 'red'
             }
         },
         yellow: {
             tags: ['lightswitcher'],
-            // @ts-ignore
-            entry: assign({ switches: (ctx) => ctx.switches + 1}),
+
+            entry: assign<LightContext>({ switches: (ctx) => ctx.switches + 1}),
             on: {
                 SWITCH: 'green',
                 BREAK: {target: 'broken', cond: {
@@ -48,12 +76,15 @@ const lightMachine = createMachine({
                         minAmount: 4
                     }}
 
+            },
+            invoke: {
+                src: minuteMachine,
+                onDone: 'green'
             }
         },
         red: {
             tags: ['lightswitcher'],
-            // @ts-ignore
-            entry: assign({ switches: (ctx: LightContext) => ctx.switches + 1}),
+            entry: assign<LightContext>({ switches: (ctx) => ctx.switches + 1}),
             on: {
                 SWITCH: 'yellow',
                 BREAK: {target: 'broken', cond: (context) => context.switches > 7}
@@ -61,6 +92,11 @@ const lightMachine = createMachine({
             },
             // exit actions
             exit: 'logPeople',
+
+            invoke: {
+                src: minuteMachine,
+                onDone: 'yellow'
+            }
         },
         broken: {
             type: 'parallel',
@@ -82,9 +118,7 @@ const lightMachine = createMachine({
 }, {
     // actions - the mapping of action names to their implementation
     actions: {
-        alertGreen: (context, event) => {
-            console.log('green')
-        },
+
         logPeople: () => {
             console.log('people are stopped')
         },
@@ -99,9 +133,12 @@ const lightMachine = createMachine({
     // guards - the mapping of transition guard (cond) names to their implementation
     guards: {
         isTooManySwitches: (context, event, { cond }) => {
+            console.log(context)
+            if ('minAmount' in cond) {
+                return context.switches > 7 || context.switches >= cond?.minAmount
+            }
+            return false
 
-            // @ts-ignore
-            return context.switches > 7 || context.switches >= cond?.minAmount
         }
     }
     ,
