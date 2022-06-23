@@ -31,7 +31,6 @@ import TodoList from "@/components/TodoList";
 import TodoListMachine from "@/machines/TodoListMachine";
 import LightComponent from "@/components/LightComponent";
 
-
 const toggleMachine = createMachine({
   id: "toggle",
   initial: "visible",
@@ -71,7 +70,6 @@ export default {
   name: 'App',
   components: {
     LightComponent,
-
     TodoList
   },
   data() {

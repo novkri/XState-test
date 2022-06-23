@@ -54,7 +54,6 @@ export const todosMachine = todosModel.createMachine({
                 todosModel.assign({
                     todo: '',
                     todos: (context, event) => {
-                        console.log(event.value)
                         const newTodo = createTodo(event.value)
                         return context.todos.concat({
                                 ...newTodo,

@@ -16,11 +16,10 @@ import {useMachine} from "@xstate/vue";
 
 const { state, send } = useMachine(lightMachine)
 
-console.log(state, send)
 
 </script>
 
-<style scoped  >
+<style scoped>
 .lightswitcher {
   display: flex;
   flex-direction: column;

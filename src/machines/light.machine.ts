@@ -133,7 +133,6 @@ const lightMachine = createMachine({
     // guards - the mapping of transition guard (cond) names to their implementation
     guards: {
         isTooManySwitches: (context, event, { cond }) => {
-            console.log(context)
             if ('minAmount' in cond) {
                 return context.switches > 7 || context.switches >= cond?.minAmount
             }
