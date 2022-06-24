@@ -13,18 +13,18 @@ const complexForm = createMachine({
                     }
                 },
                 edit: {
-                    initial: 'create',
+                    // initial: 'create',
                     on: {
                         TOGGLE_MODE: 'read',
                     },
-                    states: {
-                        create: {
-                            on: { EDIT: 'edit' },
-                        },
-                        edit: {
-                            on: { CREATE: 'create' },
-                        },
-                    }
+                    // states: {
+                    //     create: {
+                    //         on: { EDIT: 'edit' },
+                    //     },
+                    //     edit: {
+                    //         on: { CREATE: 'create' },
+                    //     },
+                    // }
                 }
             }
         },
@@ -32,8 +32,8 @@ const complexForm = createMachine({
             initial: 'none',
             states: {
                 none: { on: { SET_DISH: 'dish', SET_GOOD: 'good' } },
-                good: { on: { SWITCH: 'dish' } },
-                dish: { on: { SWITCH: 'good' } },
+                good: { on: { TOGGLE_DISH: 'dish' } },
+                dish: { on: { TOGGLE_DISH: 'good' } },
             },
         },
     }

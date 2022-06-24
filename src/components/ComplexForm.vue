@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button @click="send('TOGGLE_MODE')">switch</button>
     <div class="card" v-if="state.matches('dishCard.read')">
        read
     </div>
@@ -17,8 +18,23 @@
 
 import {useMachine} from "@xstate/vue";
 import complexFormMachine from "@/machines/complexForm.machine";
+import {reactive} from "vue";
 
 const { state, send } = useMachine(complexFormMachine)
+const obj = reactive({
+  type: ''
+})
+const switchType = () => {
+  console.log(state.value.value)
+  console.log(obj)
+  if (!obj.type) {
+    send('SET_DISH')
+    obj.type = state.value.value.dishType
+  } else {
+    send('TOGGLE_DISH')
+    obj.type = state.value.value.dishType
+  }
+}
 </script>
 
 <style scoped lang="scss"></style>
