@@ -22,6 +22,12 @@
     <br />
 
     <LightComponent />
+
+    <br />
+    <hr />
+    <br />
+
+    <ComplexForm />
   </div>
 </template>
 
@@ -30,6 +36,7 @@ import { createMachine, interpret, State } from "xstate";
 import TodoList from "@/components/TodoList";
 import TodoListMachine from "@/machines/TodoListMachine";
 import LightComponent from "@/components/LightComponent";
+import ComplexForm from '@/components/ComplexForm'
 
 const toggleMachine = createMachine({
   id: "toggle",
@@ -70,7 +77,8 @@ export default {
   name: 'App',
   components: {
     LightComponent,
-    TodoList
+    TodoList,
+    ComplexForm
   },
   data() {
     return {
